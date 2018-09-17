@@ -1,0 +1,131 @@
+---
+title: "02_HW_Sampling_Simulation"
+author: "Hannah Stroud"
+date: "September 14, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Sampling and Simulation
+
+```{r}
+library(dplyr)
+```
+
+### 1. R Warmup 
+
+#### 1a. Create a vector of 100 randomly distrubuted numbers 
+```{r} 
+   my_vec <- runif(100, min=0, max=100)
+      str(my_vec)
+      summary(my_vec)
+```
+      
+str gives information on the vector itself so tells you its a numeric vector and the number of elements
+     summary gives information about the values in the vector- so it gives the Min, Max, Median and quartiles.
+     
+#### 1b. Plotting with hist
+```{r}
+hist(my_vec)
+```   
+hist(my_vec) plots the frequency of each bin, with a bin size of 10
+    #The helpfile gives the default arguments if all you enter in the () is the vector, and defines each parameter argument.
+    
+####1c. mtcars 
+```{r}
+ data(mtcars)
+    class(mtcars)
+    str(mtcars)
+    summary(mtcars)
+```
+
+class tells use mtcars is a data frame, str gives information about the dataframe- ie variables and number of observations, summary gives quartiles of each variable
+
+####1d. Looking up data.frame
+Data frames are collections of variables, like lists or matrices. Rows have unique names, each row is a variable with a set of observations. 
+
+###2. Sample Properties
+
+```{r}
+vole_vaso <- c(98,96,94,88,86,82,77,74,70,60,
+               59,52,50,47,40,35,29,13,6,5) 
+```
+####2a. Say vole vasopressin 10 times fast as you can
+    I tripped up twice
+   
+####2b.
+```{r}    
+     #mean
+      mean(vole_vaso)
+     #median
+      median(vole_vaso)
+     #standard deviation
+      sd(vole_vaso)
+     #interquartile range
+      IQR(vole_vaso)  
+```
+####2c. Standard Error of Mean 
+```{r}
+       sem <- sd(vole_vaso)/sqrt(length(vole_vaso))
+      sem 
+```
+
+####2d. 
+The standard error of mean tells us that our mean is fairly precise for giving the average level of vassopressin in the population. 
+
+### 3. Sample Size for upper quartiles 
+```{r}
+quantile(vole_vaso, probs = 0.75)
+```
+####3a. 
+```{r}  resamp <- sample(vole_vaso, 10, replace=TRUE)```
+
+#### 3b.Build Initial Data Frame
+```{r} 
+vole_sim <- data.frame(samp_size= rep(5:20, time=100))
+```
+
+
+#### 3c. Simulate upper quartiles for each sample size
+```{r} 
+vole_sim_uq <- vole_sim %>% 
+  rowwise() %>%
+mutate(upp_qnt= quantile(sample(vole_vaso, size=samp_size, replace=TRUE),probs=0.75)) %>%
+  ungroup()
+```
+#### 3d. Plot to estimate best sample size 
+```{r}
+plot(upp_qnt~samp_size, data=vole_sim_uq)
+```
+    Best sample size would be around 17 samples. 
+    
+### 4. SE and CI
+####4a. 
+```{r}
+stnd_err_upper_quant <- vole_sim_uq %>%
+  group_by(samp_size)%>%
+  summarize(sd_up_qnt= sd(upp_qnt)) %>%
+  ungroup
+stnd_err_upper_quant
+```
+####4b.The meaning of the standard error 
+The standard error of the upper quantile tells use the distribution of standard errors 
+####4c. Confidence interval
+```{r}
+stderr_10 <- stnd_err_upper_quant[6,2] 
+CI_uq <- 2*stderr_10
+CI_uq
+```
+
+####4d. Extra Cred- Each sim with a CI
+```{r}
+#have each sim calculate CI
+
+
+```
+
+
+  
