@@ -117,8 +117,8 @@ The standard error of the upper quantile tells use the distribution of standard 
 stderr_10 <- stnd_err_upper_quant[6,2] 
 avg_u_qt_10 <-stnd_err_upper_quant[6,3]
 CI_10 <- 2*stderr_10
-CI_uq_lower <- avg_u_qt_10 - stderr_10*2
-CI_uq_upper <- avg_u_qt_10 + stderr_10*2 
+CI_uq_lower <- 83- stderr_10*2
+CI_uq_upper <- 83+ stderr_10*2 
 ```
 
 ####4d. Extra Credit Extra Credit: Instead of having each sim calculate a upper quartile, and then sifting down to the SE of that upper quartile (or the CI), have each simulation calculate a CI. Then, for just a sample size of 10, how many CI's contain the true value of 83?
