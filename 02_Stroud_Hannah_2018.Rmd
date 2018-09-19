@@ -107,17 +107,18 @@ Best sample size would be around 17 samples.
 ```{r}
 stnd_err_upper_quant <- vole_sim_uq %>%
   group_by(samp_size)%>%
-  summarize(sd_up_qnt= sd(upp_qnt)) %>%
-  ungroup
-stnd_err_upper_quant
+  summarize(sd_up_qnt= sd(upp_qnt), avg_upp_quant= mean(upp_qnt)) %>% 
+  ungroup()
 ```
 ####4b.The meaning of the standard error 
 The standard error of the upper quantile tells use the distribution of standard errors  
 ####4c. Confidence interval
 ```{r}
 stderr_10 <- stnd_err_upper_quant[6,2] 
-CI_uq <- 2*stderr_10
-CI_uq
+avg_u_qt_10 <-stnd_err_upper_quant[6,3]
+CI_10 <- 2*stderr_10
+CI_uq_lower <- avg_u_qt_10 - CI_10/2
+CI_uq_upper <- avg_u_qt_10 + CI_10/2 
 ```
 
 ####4d. Extra Credit Extra Credit: Instead of having each sim calculate a upper quartile, and then sifting down to the SE of that upper quartile (or the CI), have each simulation calculate a CI. Then, for just a sample size of 10, how many CI's contain the true value of 83?
@@ -136,10 +137,3 @@ vole_sim_CI
 ```
 95 confidence intervals contain the true value of 83  
 
-```
- 
-  
-```
-
-
-  
