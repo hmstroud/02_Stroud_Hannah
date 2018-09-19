@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(dplyr)
+library(magrittr)
 ```
 
 ### 1. R Warmup 
@@ -24,15 +25,15 @@ library(dplyr)
       summary(my_vec)
 ```
       
-str gives information on the vector itself so tells you its a numeric vector and the number of elements
-     summary gives information about the values in the vector- so it gives the Min, Max, Median and quartiles.
+str gives information on the vector itself so tells you its a numeric vector and the number of elements  
+summary gives information about the values in the vector- so it gives the Min, Max, Median and quartiles.  
      
 #### 1b. Plotting with hist
 ```{r}
 hist(my_vec)
 ```   
 hist(my_vec) plots the frequency of each bin, with a bin size of 10
-    #The helpfile gives the default arguments if all you enter in the () is the vector, and defines each parameter argument.
+The helpfile gives the default arguments if all you enter in the () is the vector, and defines each parameter argument.  
     
 ####1c. mtcars 
 ```{r}
@@ -42,10 +43,10 @@ hist(my_vec) plots the frequency of each bin, with a bin size of 10
     summary(mtcars)
 ```
 
-class tells use mtcars is a data frame, str gives information about the dataframe- ie variables and number of observations, summary gives quartiles of each variable
+class tells use mtcars is a data frame, str gives information about the dataframe- ie variables and number of observations, summary gives quartiles of each variable  
 
 ####1d. Looking up data.frame
-Data frames are collections of variables, like lists or matrices. Rows have unique names, each row is a variable with a set of observations. 
+Data frames are collections of variables, like lists or matrices. Rows have unique names, each row is a variable with a set of observations.   
 
 ###2. Sample Properties
 
@@ -54,7 +55,7 @@ vole_vaso <- c(98,96,94,88,86,82,77,74,70,60,
                59,52,50,47,40,35,29,13,6,5) 
 ```
 ####2a. Say vole vasopressin 10 times fast as you can
-    I tripped up twice
+    I tripped up twice  
    
 ####2b.
 ```{r}    
@@ -74,7 +75,7 @@ vole_vaso <- c(98,96,94,88,86,82,77,74,70,60,
 ```
 
 ####2d. 
-The standard error of mean tells us that our mean is fairly precise for giving the average level of vassopressin in the population. 
+The standard error of mean tells us that our mean is fairly precise for giving the average level of vassopressin in the population.  
 
 ### 3. Sample Size for upper quartiles 
 ```{r}
@@ -93,14 +94,13 @@ vole_sim <- data.frame(samp_size= rep(5:20, time=100))
 ```{r} 
 vole_sim_uq <- vole_sim %>% 
   rowwise() %>%
-mutate(upp_qnt= quantile(sample(vole_vaso, size=samp_size, replace=TRUE),probs=0.75)) %>%
-  ungroup()
+mutate(upp_qnt= quantile(sample(vole_vaso, size=samp_size, replace=TRUE),probs=0.75))
 ```
 #### 3d. Plot to estimate best sample size 
 ```{r}
 plot(upp_qnt~samp_size, data=vole_sim_uq)
 ```
-    Best sample size would be around 17 samples. 
+Best sample size would be around 17 samples.  
     
 ### 4. SE and CI
 ####4a. 
@@ -112,7 +112,7 @@ stnd_err_upper_quant <- vole_sim_uq %>%
 stnd_err_upper_quant
 ```
 ####4b.The meaning of the standard error 
-The standard error of the upper quantile tells use the distribution of standard errors 
+The standard error of the upper quantile tells use the distribution of standard errors  
 ####4c. Confidence interval
 ```{r}
 stderr_10 <- stnd_err_upper_quant[6,2] 
@@ -120,11 +120,25 @@ CI_uq <- 2*stderr_10
 CI_uq
 ```
 
-####4d. Extra Cred- Each sim with a CI
+####4d. Extra Credit Extra Credit: Instead of having each sim calculate a upper quartile, and then sifting down to the SE of that upper quartile (or the CI), have each simulation calculate a CI. Then, for just a sample size of 10, how many CI's contain the true value of 83?
 ```{r}
-#have each sim calculate CI
+# simulation that directly gives CI
+# CI= 2*Standard Error
+# standard error= standard deviation of your estimates 
+# standard deviation= measure of dispersion 
 
+vole_sim_CI <- vole_sim_uq %>% #take the upper quartile data already have
+  group_by(samp_size)%>%
+  summarize(uq_se = sd(upp_qnt), uq_avg= mean(upp_qnt)) %>%
+  mutate(CI= 2*uq_se) %>%
+  ungroup()
+vole_sim_CI
+```
+95 confidence intervals contain the true value of 83  
 
+```
+ 
+  
 ```
 
 
